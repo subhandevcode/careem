@@ -2,22 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Auth;
 
 class ChatController extends Controller
 {
-    public function chatWithUser($userId)
+    public function chatDashboard()
     {
-        $user = auth()->user();  // Get the logged-in user
-        
-        // Check if the logged-in user has an active subscription
-        if ($user->hasActiveSubscription()) {
-            // Allow the user to chat
-            return view('chat', ['userId' => $userId]);
-        } else {
-            // Redirect to subscription page
-            return redirect()->route('subscribe.show')->with('error', 'You need an active subscription to chat.');
-        }
+        $nearbyUsers = User::where('id', '!=', auth()->id())->get(); // Optional: apply location filter
+        return view('chat.dashboard', compact('nearbyUsers'));
+    }
+
+    public function openChat(User $user)
+    {
+        $messages = Message::where(function ($q) use ($user) {
+            $q->where('sender_id', auth()->id())
+              ->where('receiver_id', $user->id);
+        })->orWhere(function ($q) use ($user) {
+            $q->where('sender_id', $user->id)
+              ->where('receiver_id', auth()->id());
+        })->orderBy('created_at')->get();
+
+        $nearbyUsers = User::where('id', '!=', auth()->id())->get();
+        return view('chat.dashboard', compact('messages', 'user', 'nearbyUsers'));
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $request->validate([
+            'receiver_id' => 'required|exists:users,id',
+            'message' => 'required|string|max:1000',
+        ]);
+
+        Message::create([
+            'sender_id' => auth()->id(),
+            'receiver_id' => $request->receiver_id,
+            'message' => $request->message,
+        ]);
+
+        return back();
     }
 }

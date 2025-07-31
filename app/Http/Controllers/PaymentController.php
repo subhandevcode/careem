@@ -41,14 +41,23 @@ class PaymentController extends Controller
         $paymentStatus = $this->processBankPayment($cardNumber, $expiryDate, $cvv);
 
         // Check payment status and redirect accordingly
-        if ($paymentStatus === 'success') {
-            // Payment successful, redirect to success page
-            // return redirect()->route('payment.success'); 
-            return redirect()->route('userprofile.edit', ['user_id' => auth()->id()]);
+        // if ($paymentStatus === 'success') {
+        //     // Payment successful, redirect to success page
+        //     // return redirect()->route('payment.success'); 
+        //     return redirect()->route('userprofile.edit', ['user_id' => auth()->id()]);
 
-        } else {
-            // Payment failed, redirect to failure page
-            return redirect()->route('payment.failed'); 
+        // } else {
+        //     // Payment failed, redirect to failure page
+        //     return redirect()->route('payment.failed'); 
+        // }
+        if ($paymentStatus === 'success') {
+            $user = auth()->user();
+            $user->is_subscribed = true;
+            $user->save();
+
+            return redirect()
+                ->route('userprofile.edit')
+                ->with('subscribed', true);  // optional for frontend use
         }
     }
 

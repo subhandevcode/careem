@@ -36,6 +36,7 @@ class User extends Authenticatable
         'office_timings',
         'vehicle_type',
         'vehicle_number',
+        'whatsapp_number',
     ];
 
     /**
@@ -92,5 +93,15 @@ class User extends Authenticatable
             ->first();
 
         return $subscription !== null;
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
     }
 }

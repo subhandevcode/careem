@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\dataController;
@@ -66,3 +67,11 @@ Route::get('/payment/success', function () {
 Route::get('/payment/failed', function () {
     return view('payment.payment-failed');  // Payment failed page inside the 'payment' folder
 })->name('payment.failed');
+
+Route::get('/chat', [ChatController::class, 'chatDashboard'])->name('chat.dashboard');
+Route::get('/chat/user/{user}', [ChatController::class, 'openChat'])->name('chat.open');
+Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+
+Route::get('/chat/user/{user}', function (User $user) {
+    return view('chat.livewire', compact('user'));
+})->middleware('auth');
