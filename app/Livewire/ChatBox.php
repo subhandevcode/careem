@@ -13,6 +13,11 @@ class ChatBox extends Component
 
     public function mount(User $receiver)
     {
+        // Rider ke liye subscription check
+        if (auth()->user()->role === 'rider' && !auth()->user()->is_subscribed) {
+            abort(403, 'Please subscribe to use chat.');
+        }
+
         $this->receiver = $receiver;
     }
 

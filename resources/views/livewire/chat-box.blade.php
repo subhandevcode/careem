@@ -1,36 +1,54 @@
-<div class="flex flex-col h-[80vh] bg-gray-100 border rounded-lg shadow">
-    
-    {{-- Messages --}}
-    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-2">
-        @forelse($messages as $msg)
-            <div class="flex {{ $msg->sender_id === auth()->id() ? 'justify-end' : 'justify-start' }}">
-                <div class="max-w-xs px-4 py-2 rounded-lg shadow 
-                    {{ $msg->sender_id === auth()->id() ? 'bg-green-500 text-white' : 'bg-white text-gray-800 border' }}">
-                    <p>{{ $msg->message }}</p>
-                    <small class="block mt-1 text-xs opacity-70">
-                        {{ $msg->created_at->format('h:i A') }}
-                    </small>
-                </div>
-            </div>
-        @empty
-            <p class="text-center text-gray-500 mt-4">No messages yet. Say hello 👋</p>
-        @endforelse
+<div class="flex flex-col h-[80vh] bg-gray-50 border rounded-lg shadow-lg overflow-hidden" wire:poll.2s>
+
+    {{-- Header --}}
+    <div class="bg-green-600 text-white p-3 flex items-center space-x-3 shadow">
+        <div class="bg-white text-green-600 rounded-full w-10 h-10 flex items-center justify-center font-bold">
+            {{ strtoupper(substr($receiver->name, 0, 1)) }}
+        </div>
+        <div>
+            <p class="font-semibold">{{ $receiver->name }}</p>
+            <p class="text-sm text-green-100">Online</p>
+        </div>
     </div>
 
-    {{-- Input --}}
-    <form wire:submit.prevent="sendMessage" class="flex border-t p-3 bg-white">
-        <input type="text" 
-               wire:model.defer="messageText" 
+    {{-- Messages Area --}}
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3">
+        @foreach($messages as $msg)
+            @if($msg->sender_id === auth()->id())
+                {{-- Sent --}}
+                <div class="flex justify-end">
+                    <div class="bg-green-500 text-white px-4 py-2 rounded-2xl rounded-br-none max-w-xs shadow">
+                        {{ $msg->message }}
+                        <div class="text-xs text-right opacity-80 mt-1">
+                            {{ $msg->created_at->format('H:i') }}
+                        </div>
+                    </div>
+                </div>
+            @else
+                {{-- Received --}}
+                <div class="flex justify-start">
+                    <div class="bg-white text-gray-800 px-4 py-2 rounded-2xl rounded-bl-none max-w-xs shadow border">
+                        {{ $msg->message }}
+                        <div class="text-xs text-right text-gray-500 mt-1">
+                            {{ $msg->created_at->format('H:i') }}
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+    </div>
+
+    {{-- Input Box --}}
+    <form wire:submit.prevent="sendMessage" class="flex items-center p-3 bg-white border-t space-x-2">
+        <input type="text" wire:model.defer="messageText"
                placeholder="Type a message..."
-               class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring focus:border-blue-400" 
-               autofocus>
-        <button type="submit" 
-                class="ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full">
+               class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring focus:border-green-500">
+        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full shadow">
             Send
         </button>
     </form>
 
-    {{-- Auto scroll --}}
+    {{-- Auto Scroll --}}
     <script>
         document.addEventListener('livewire:update', () => {
             let chatBox = document.getElementById('chat-messages');
@@ -38,3 +56,4 @@
         });
     </script>
 </div>
+

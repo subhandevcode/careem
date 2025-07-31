@@ -27,12 +27,21 @@ class dataController extends Controller
             'vehicle_number' => 'nullable|string|max:255',
         ]);
 
-        Auth::user()->update($request->only([
+        $user = Auth::user();
+
+        // Update profile fields
+        $user->update($request->only([
             'office_location', 'office_lat', 'office_lng',
             'home_location', 'home_lat', 'home_lng',
             'office_timings', 'vehicle_type', 'vehicle_number',
         ]));
 
-        return redirect()->back()->with('success', 'Profile updated successfully!');
+        // 🚖 Set role as driver when profile is saved
+        if ($user->role !== 'driver') {
+            $user->role = 'driver';
+            $user->save();
+        }
+
+        return redirect()->back()->with('success', 'Profile updated successfully! You are now a driver.');
     }
 }
