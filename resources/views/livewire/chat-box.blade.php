@@ -1,4 +1,4 @@
-<div class="flex flex-col h-[80vh] bg-gray-50 border rounded-lg shadow-lg overflow-hidden" wire:poll.2s>
+<div class="flex flex-col h-[80vh] bg-gray-50 border rounded-lg shadow-lg overflow-hidden">
 
     {{-- Header --}}
     <div class="bg-green-600 text-white p-3 flex items-center space-x-3 shadow">
@@ -11,8 +11,8 @@
         </div>
     </div>
 
-    {{-- Messages Area --}}
-    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3">
+    {{-- Messages Area (only this part will auto-refresh) --}}
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3" wire:poll.2s>
         @foreach($messages as $msg)
             @if($msg->sender_id === auth()->id())
                 {{-- Sent --}}
@@ -40,20 +40,26 @@
 
     {{-- Input Box --}}
     <form wire:submit.prevent="sendMessage" class="flex items-center p-3 bg-white border-t space-x-2">
-        <input type="text" wire:model.defer="messageText"
+        <input type="text" 
+               wire:model.defer="messageText"
                placeholder="Type a message..."
                class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring focus:border-green-500">
-        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full shadow">
+        <button type="submit" 
+                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full shadow">
             Send
         </button>
     </form>
 
-    {{-- Auto Scroll --}}
-    <script>
-        document.addEventListener('livewire:update', () => {
-            let chatBox = document.getElementById('chat-messages');
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
-    </script>
 </div>
 
+{{-- Auto Scroll Script --}}
+@push('scripts')
+<script>
+    document.addEventListener('livewire:update', () => {
+        let chatBox = document.getElementById('chat-messages');
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    });
+</script>
+@endpush

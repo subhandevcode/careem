@@ -23,4 +23,6 @@ class MessageController extends Controller
 
         return view('messages.inbox', compact('chats'));
     }
+
+    
 }

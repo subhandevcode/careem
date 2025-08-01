@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Livewire\ChatBox;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\dataController;
@@ -23,7 +24,7 @@ Route::middleware([
        if (Auth::check()) {
            // Check user type to redirect to the appropriate dashboard
            if (Auth::user()->user_type == "1") { // Admin User
-               return view('admin.dashboard');
+               return view('user.index');
            } elseif (Auth::user()->user_type == "0") { // Regular User
                return view('dashboard');
            }    

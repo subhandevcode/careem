@@ -21,6 +21,17 @@
                     autocomplete="username" />
             </div>
 
+            <!-- Gender -->
+            <div class="mt-4">
+                <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+                <select id="gender" name="gender" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                    required>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+
             <div>
                 <label for="whatsapp_number">WhatsApp Number</label>
                 <input id="whatsapp_number" class="block mt-1 w-full" type="text" name="whatsapp_number"

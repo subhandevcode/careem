@@ -221,8 +221,8 @@
                         document.getElementById('office_lat').value = userLat;
                         document.getElementById('office_lng').value = userLng;
 
-                        document.getElementById('home_location').value = homeAddress;
-                        document.getElementById('office_location').value = officeAddress;
+                        // document.getElementById('home_location').value = homeAddress;
+                        // document.getElementById('office_location').value = officeAddress;
 
                         initMap(userLat, userLng, userLat, userLng);
                         getNearbySuggestions(userLat, userLng);

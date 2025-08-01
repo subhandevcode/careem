@@ -19,7 +19,7 @@
             </div>
 
             @auth
-                @if(auth()->user()->role === 'driver')
+                @if(auth()->user()->role === 'driver' || (auth()->user()->role === 'rider' && auth()->user()->is_subscribed))
                     <x-nav-link href="{{ url('/messages') }}" :active="request()->is('messages')">
                         📩 Messages
                     </x-nav-link>
